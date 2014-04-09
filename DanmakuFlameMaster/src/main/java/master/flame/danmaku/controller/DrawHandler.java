@@ -36,6 +36,10 @@ public class DrawHandler extends Handler {
     private static final int PAUSE = 7;
     
     private static final int RELEASE = 8;
+    
+    private static final int SHOW_DANMAKUS = 9;
+    
+    private static final int HIDE_DANMAKUS = 10;
 
     private long pausedPostion = 0;
 
@@ -111,6 +115,7 @@ public class DrawHandler extends Handler {
                     });
                 }
                 break;
+            case SHOW_DANMAKUS:
             case START:
                 Long startTime = (Long) msg.obj;
                 if (startTime != null) {
@@ -126,6 +131,9 @@ public class DrawHandler extends Handler {
                     removeMessages(RESUME);
                     sendEmptyMessage(UPDATE);
                     drawTask.start();
+                    if (what == SHOW_DANMAKUS) {
+                        mDanmakusVisible = true;
+                    }
                 } else {
                     sendEmptyMessageDelayed(RESUME, 100);
                 }
@@ -171,17 +179,21 @@ public class DrawHandler extends Handler {
                 break;
             case RELEASE:
             case PAUSE:
+            case HIDE_DANMAKUS:
             case QUIT:
                 removeCallbacksAndMessages(null);
                 quitFlag = true;
                 pausedPostion = timer.currMillisecond;
-                if (what == QUIT || what == RELEASE) {
+                if (what == HIDE_DANMAKUS || what == QUIT || what == RELEASE) {
                     if (this.drawTask != null) {
                         this.drawTask.quit();
                     }
                     if (this.mDanmakuView != null) {
                         this.mDanmakuView.clear();
                     }
+                }
+                if (what == HIDE_DANMAKUS) {
+                    mDanmakusVisible = false;
                 }
                 if (what == RELEASE) {
                     if (this.getLooper() != Looper.getMainLooper())
@@ -255,17 +267,15 @@ public class DrawHandler extends Handler {
     public void showDanmakus(long position) {
         if (mDanmakusVisible)
             return;
-        mDanmakuView.clear();
-        mDanmakusVisible = true;
-        start(position);
+        removeCallbacksAndMessages(null);
+        obtainMessage(SHOW_DANMAKUS, position).sendToTarget();
     }
 
     public void hideDanmakus() {
         if (!mDanmakusVisible)
             return;
-        mDanmakusVisible = false;
-        mDanmakuView.clear();
-        quit();
+        removeCallbacksAndMessages(null);
+        obtainMessage(HIDE_DANMAKUS).sendToTarget();
     }
 
     public boolean getVisibility() {
