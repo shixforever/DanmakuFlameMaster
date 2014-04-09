@@ -253,12 +253,16 @@ public class DrawHandler extends Handler {
     }
 
     public void showDanmakus(long position) {
+        if (mDanmakusVisible)
+            return;
         mDanmakuView.clear();
         mDanmakusVisible = true;
         start(position);
     }
 
     public void hideDanmakus() {
+        if (!mDanmakusVisible)
+            return;
         mDanmakusVisible = false;
         mDanmakuView.clear();
         quit();
