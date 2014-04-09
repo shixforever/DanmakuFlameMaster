@@ -5,5 +5,8 @@
     </string>
     <string name="action_settings">Settings
     </string>
+    
+    <string name="hide_danmaku">隐藏弹幕</string>
+    <string name="show_danmaku">显示弹幕</string>
 
 </resources>

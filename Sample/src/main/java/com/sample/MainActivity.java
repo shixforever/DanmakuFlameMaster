@@ -7,6 +7,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.*;
+import android.widget.Button;
 import android.widget.PopupWindow;
 import android.widget.VideoView;
 
@@ -22,7 +23,7 @@ import master.flame.danmaku.ui.widget.DanmakuSurfaceView;
 
 import com.sample.R;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements View.OnClickListener{
 
     private DanmakuSurfaceView mDanmakuView;
 
@@ -31,6 +32,10 @@ public class MainActivity extends Activity {
     private View mMediaController;
 
     public PopupWindow mPopupWindow;
+
+    private Button mBtnHideDanmaku;
+
+    private Button mBtnShowDanmaku;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,20 +61,13 @@ public class MainActivity extends Activity {
 	}
 
     private void findViews() {
-        LayoutInflater mLayoutInflater = getLayoutInflater();
-        mMediaController = mLayoutInflater.inflate(R.layout.media_controller, null);
-        mMediaController.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mPopupWindow != null) {
-                    mPopupWindow.dismiss();
-                }
-
-                if (mVideoView != null) {
-                    mVideoView.start();
-                }
-            }
-        });
+        
+        mMediaController = findViewById(R.id.media_controller);
+        mBtnHideDanmaku = (Button) findViewById(R.id.btn_hide);
+        mBtnShowDanmaku = (Button) findViewById(R.id.btn_show);
+        mBtnHideDanmaku.setOnClickListener(this);
+        mMediaController.setOnClickListener(this);
+        mBtnShowDanmaku.setOnClickListener(this);
 
         // VideoView
         mVideoView = (VideoView) findViewById(R.id.videoview);
@@ -98,21 +96,7 @@ public class MainActivity extends Activity {
 
                 @Override
                 public void onClick(View view) {
-                    if (mPopupWindow == null) {
-                        mPopupWindow = new PopupWindow(mMediaController,
-                                ViewGroup.LayoutParams.MATCH_PARENT,
-                                ViewGroup.LayoutParams.MATCH_PARENT);
-                    }
-
-                    if (mPopupWindow.isShowing()) {
-                        mPopupWindow.dismiss();
-                    } else{
-                        mPopupWindow.showAtLocation(mDanmakuView, Gravity.NO_GRAVITY, 0, 0);
-                    }
-
-                    if (mVideoView != null) {
-                        mVideoView.pause();
-                    }
+                    mMediaController.setVisibility(View.VISIBLE);
                 }
             });
         }
@@ -144,6 +128,19 @@ public class MainActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v==mMediaController){
+            mMediaController.setVisibility(View.GONE);
+        }else if(v == mBtnHideDanmaku){
+            if(mDanmakuView!=null)
+                mDanmakuView.hide();
+        }else if(v == mBtnShowDanmaku){
+            if(mBtnShowDanmaku!=null)
+                mDanmakuView.show();
+        }
     }
 
 }
