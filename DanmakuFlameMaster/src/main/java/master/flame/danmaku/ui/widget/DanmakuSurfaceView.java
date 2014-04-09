@@ -140,7 +140,7 @@ public class DanmakuSurfaceView extends SurfaceView implements IDanmakuView, Sur
 
     private void stopDraw() {
         if (handler != null) {
-            handler.quit();
+            handler.release();
             handler = null;
         }
         if (mDrawThread != null) {
@@ -292,7 +292,7 @@ public class DanmakuSurfaceView extends SurfaceView implements IDanmakuView, Sur
         }else{
             handler.removeCallbacksAndMessages(null);
         }
-        handler.obtainMessage(DrawHandler.START, postion).sendToTarget();
+        handler.start(postion);
     }
 
     @Override
@@ -329,12 +329,12 @@ public class DanmakuSurfaceView extends SurfaceView implements IDanmakuView, Sur
     }
 
     @Override
-    public void show() {
+    public void show(long position) {
         mDanmakuVisibile = true; 
         if (handler == null) {
             return;
         }
-        handler.showDanmakus();
+        handler.showDanmakus(position);
     }
 
     @Override

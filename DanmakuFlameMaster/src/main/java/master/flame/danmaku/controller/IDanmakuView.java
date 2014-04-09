@@ -62,7 +62,7 @@ public interface IDanmakuView {
 
     public void start();
 
-    public void start(long postion);
+    public void start(long position);
 
     public void stop();
 
@@ -74,7 +74,7 @@ public interface IDanmakuView {
     
     public void toggle();
     
-    public void show();
+    public void show(long position);
     
     public void hide();
     

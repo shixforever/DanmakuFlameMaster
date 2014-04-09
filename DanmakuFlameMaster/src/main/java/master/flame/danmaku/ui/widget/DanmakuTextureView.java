@@ -145,7 +145,7 @@ public class DanmakuTextureView extends TextureView implements IDanmakuView,
 
     private void stopDraw() {
         if (handler != null) {
-            handler.quit();
+            handler.release();
             handler = null;
         }
         if (mDrawThread != null) {
@@ -255,7 +255,7 @@ public class DanmakuTextureView extends TextureView implements IDanmakuView,
     @Override
     public void pause() {
         if (handler != null)
-            handler.quit();
+            handler.pause();
     }
 
     @Override
@@ -284,7 +284,7 @@ public class DanmakuTextureView extends TextureView implements IDanmakuView,
         } else {
             handler.removeCallbacksAndMessages(null);
         }
-        handler.obtainMessage(DrawHandler.START, postion).sendToTarget();
+        handler.start(postion);
     }
 
     @Override
@@ -320,12 +320,12 @@ public class DanmakuTextureView extends TextureView implements IDanmakuView,
     }
 
     @Override
-    public void show() {
+    public void show(long position) {
         mDanmakuVisibile  = true; 
         if (handler == null) {
             return;
         }
-        handler.showDanmakus();
+        handler.showDanmakus(position);
     }
 
     @Override

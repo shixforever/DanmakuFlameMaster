@@ -34,6 +34,8 @@ public class DrawHandler extends Handler {
     private static final int QUIT = 6;
 
     private static final int PAUSE = 7;
+    
+    private static final int RELEASE = 8;
 
     private long pausedPostion = 0;
 
@@ -79,6 +81,11 @@ public class DrawHandler extends Handler {
     public void quit() {
         removeCallbacksAndMessages(null);
         sendEmptyMessage(QUIT);
+    }
+    
+    public void release() {
+        removeCallbacksAndMessages(null);
+        sendEmptyMessage(RELEASE);
     }
 
     public boolean isStop() {
@@ -162,15 +169,18 @@ public class DrawHandler extends Handler {
                 }
                 sendEmptyMessage(UPDATE);
                 break;
+            case RELEASE:
             case PAUSE:
             case QUIT:
                 removeCallbacksAndMessages(null);
                 quitFlag = true;
                 pausedPostion = timer.currMillisecond;
-                if (what == QUIT){
+                if (what == QUIT || what == RELEASE){
                     if (this.drawTask != null){
                         this.drawTask.quit();
                     }
+                }
+                if (what == RELEASE) {
                     if (this.getLooper() != Looper.getMainLooper())
                         this.getLooper().quit();
                 }
@@ -207,6 +217,10 @@ public class DrawHandler extends Handler {
         task.prepare();
         return task;
     }
+    
+    public void start(long postion) {
+        obtainMessage(DrawHandler.START, postion).sendToTarget();
+    }
 
     public void seekTo(Long ms) {
         seekBy(ms - timer.currMillisecond);
@@ -235,14 +249,16 @@ public class DrawHandler extends Handler {
         sendEmptyMessage(DrawHandler.PAUSE);
     }
 
-    public void showDanmakus() {
+    public void showDanmakus(long position) {
         mDanmakuView.clear();
         mDanmakusVisible = true;
+        start(position);
     }
 
     public void hideDanmakus() {
         mDanmakusVisible = false;
         mDanmakuView.clear();
+        quit();
     }
 
     public boolean getVisibility() {
