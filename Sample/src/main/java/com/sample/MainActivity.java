@@ -23,7 +23,7 @@ import master.flame.danmaku.ui.widget.DanmakuSurfaceView;
 
 import com.sample.R;
 
-public class MainActivity extends Activity implements View.OnClickListener{
+public class MainActivity extends Activity implements View.OnClickListener {
 
     private DanmakuSurfaceView mDanmakuView;
 
@@ -37,58 +37,66 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
     private Button mBtnShowDanmaku;
 
+    private BaseDanmakuParser mParser;
+
+    private Button mBtnPauseDanmaku;
+
+    private Button mBtnResumeDanmaku;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         findViews();
     }
-    
-	private BaseDanmakuParser createParser(InputStream stream) {
-		ILoader loader = DanmakuLoaderFactory
-				.create(DanmakuLoaderFactory.TAG_BILI);
 
-		try {
-			loader.load(stream);
-		} catch (IllegalDataException e) {
-			e.printStackTrace();
-		}
-		BaseDanmakuParser parser = new BiliDanmukuParser();
-		IDataSource<?> dataSource = loader.getDataSource();
-		parser.load(dataSource);
-		return parser;
+    private BaseDanmakuParser createParser(InputStream stream) {
+        ILoader loader = DanmakuLoaderFactory.create(DanmakuLoaderFactory.TAG_BILI);
 
-	}
+        try {
+            loader.load(stream);
+        } catch (IllegalDataException e) {
+            e.printStackTrace();
+        }
+        BaseDanmakuParser parser = new BiliDanmukuParser();
+        IDataSource<?> dataSource = loader.getDataSource();
+        parser.load(dataSource);
+        return parser;
+
+    }
 
     private void findViews() {
-        
+
         mMediaController = findViewById(R.id.media_controller);
         mBtnHideDanmaku = (Button) findViewById(R.id.btn_hide);
         mBtnShowDanmaku = (Button) findViewById(R.id.btn_show);
+        mBtnPauseDanmaku = (Button) findViewById(R.id.btn_pause);
+        mBtnResumeDanmaku = (Button) findViewById(R.id.btn_resume);
         mBtnHideDanmaku.setOnClickListener(this);
         mMediaController.setOnClickListener(this);
         mBtnShowDanmaku.setOnClickListener(this);
+        mBtnPauseDanmaku.setOnClickListener(this);
+        mBtnResumeDanmaku.setOnClickListener(this);
 
         // VideoView
         mVideoView = (VideoView) findViewById(R.id.videoview);
         // DanmakuView
         mDanmakuView = (DanmakuSurfaceView) findViewById(R.id.sv_danmaku);
         if (mDanmakuView != null) {
-			BaseDanmakuParser parser = createParser(this.getResources()
-					.openRawResource(R.raw.comments));
-			mDanmakuView.setCallback(new Callback() {
-                
+            mParser = createParser(this.getResources().openRawResource(R.raw.comments));
+            mDanmakuView.setCallback(new Callback() {
+
                 @Override
                 public void updateTimer(DanmakuTimer timer) {
-                                        
+
                 }
-                
+
                 @Override
                 public void prepared() {
                     mDanmakuView.start();
                 }
             });
-			mDanmakuView.prepare(parser);
+            mDanmakuView.prepare(mParser);
 
             mDanmakuView.showFPS(true);
             mDanmakuView.enableDanmakuDrawingCache(true);
@@ -101,23 +109,21 @@ public class MainActivity extends Activity implements View.OnClickListener{
             });
         }
 
-
         if (mVideoView != null) {
-        	 mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                 @Override
-                 public void onPrepared(MediaPlayer mediaPlayer) {
-                     mediaPlayer.start();
-                 }
-             });
+            mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mediaPlayer) {
+                    mediaPlayer.start();
+                }
+            });
             mVideoView.setVideoPath(Environment.getExternalStorageDirectory() + "/1.flv");
         }
-
 
     }
 
     @Override
     protected void onDestroy() {
-        if(mDanmakuView!=null){
+        if (mDanmakuView != null) {
             // dont forget release!
             mDanmakuView.release();
         }
@@ -132,14 +138,19 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        if(v==mMediaController){
+        if (v == mMediaController) {
             mMediaController.setVisibility(View.GONE);
-        }else if(v == mBtnHideDanmaku){
-            if(mDanmakuView!=null)
-                mDanmakuView.hide();
-        }else if(v == mBtnShowDanmaku){
-            if(mBtnShowDanmaku!=null)
-                mDanmakuView.show();
+        }
+        if (mDanmakuView == null || !mDanmakuView.isPrepared())
+            return;
+        if (v == mBtnHideDanmaku) {
+            mDanmakuView.hide();
+        } else if (v == mBtnShowDanmaku) {
+            mDanmakuView.show(mParser.getTimer().currMillisecond); // sync to the video time in your practice
+        } else if (v == mBtnPauseDanmaku) {
+            mDanmakuView.pause();
+        } else if (v == mBtnResumeDanmaku) {
+            mDanmakuView.resume();
         }
     }
 

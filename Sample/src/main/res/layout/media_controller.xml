@@ -18,17 +18,28 @@
 
         <Button
             android:id="@+id/btn_hide"
-            android:layout_width="wrap_content" 
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/hide_danmaku"
-            />
-        
-                <Button
+            android:text="@string/hide_danmaku" />
+
+        <Button
             android:id="@+id/btn_show"
-            android:layout_width="wrap_content" 
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/show_danmaku"
-            />
+            android:text="@string/show_danmaku" />
+
+        <Button
+            android:id="@+id/btn_pause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pause_danmaku" />
+        
+        <Button
+            android:id="@+id/btn_resume"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/resume_danmaku" />
+        
     </LinearLayout>
 
 </FrameLayout>
