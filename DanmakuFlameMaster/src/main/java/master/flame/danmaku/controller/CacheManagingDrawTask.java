@@ -93,6 +93,9 @@ public class CacheManagingDrawTask extends DrawTask {
     @Override
     public void seek(long mills) {
         super.seek(mills);
+        if (mCacheManager == null) {
+            start();
+        }
         mCacheManager.seek(mills);
     }
 

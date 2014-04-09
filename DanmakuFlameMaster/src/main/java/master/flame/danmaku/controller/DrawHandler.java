@@ -175,9 +175,12 @@ public class DrawHandler extends Handler {
                 removeCallbacksAndMessages(null);
                 quitFlag = true;
                 pausedPostion = timer.currMillisecond;
-                if (what == QUIT || what == RELEASE){
-                    if (this.drawTask != null){
+                if (what == QUIT || what == RELEASE) {
+                    if (this.drawTask != null) {
                         this.drawTask.quit();
+                    }
+                    if (this.mDanmakuView != null) {
+                        this.mDanmakuView.clear();
                     }
                 }
                 if (what == RELEASE) {
