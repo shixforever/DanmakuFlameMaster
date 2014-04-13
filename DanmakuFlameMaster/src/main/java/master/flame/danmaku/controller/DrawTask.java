@@ -105,7 +105,7 @@ public class DrawTask implements IDrawTask {
     @Override
     public void seek(long mills) {
         reset();
-        requestCanvasClear();
+        requestClear();
         GlobalFlagValues.updateVisibleFlag();
         mStartRenderTime = mills < 1000 ? 0 : mills;
     }
@@ -160,7 +160,7 @@ public class DrawTask implements IDrawTask {
         }
     }
     
-    protected void requestCanvasClear(){
+    public void requestClear(){
         clearFlag = 5;
     }
 
